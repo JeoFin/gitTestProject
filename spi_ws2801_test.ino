@@ -1,0 +1,93 @@
+#include <SPI.h>
+
+byte red[50]={0x00,0x00,0x00,0x00,0x0F,
+              0x00,0x00,0x00,0x00,0x0F,
+              0x00,0x00,0x00,0x00,0x0F,
+              0x00,0x00,0x00,0x00,0x0F,
+              0x00,0x00,0x00,0x00,0x0F,
+              0x00,0x00,0x00,0x00,0x0F,
+              0x00,0x00,0x00,0x00,0x0F,
+              0x00,0x00,0x00,0x00,0x0F,
+              0x00,0x00,0x00,0x00,0x0F,
+              0x00,0x00,0x00,0x00,0x0F};
+byte green[50]={0x00,0x00,0x0F,0x00,0x00,
+              0x00,0x00,0x0F,0x00,0x00,
+              0x00,0x00,0x0F,0x00,0x00,
+              0x00,0x00,0x0F,0x00,0x00,
+              0x00,0x00,0x0F,0x00,0x00,
+              0x00,0x00,0x0F,0x00,0x00,
+              0x00,0x00,0x0F,0x00,0x00,
+              0x00,0x00,0x0F,0x00,0x00,
+              0x00,0x00,0x0F,0x00,0x00,
+              0x00,0x00,0x0F,0x00,0x00};
+byte blue[50]={0x0F,0x00,0x00,0x00,0x00,
+              0x0F,0x00,0x00,0x00,0x00,
+              0x0F,0x00,0x00,0x00,0x00,
+              0x0F,0x00,0x00,0x00,0x00,
+              0x0F,0x00,0x00,0x00,0x00,
+              0x0F,0x00,0x00,0x00,0x00,
+              0x0F,0x00,0x00,0x00,0x00,
+              0x0F,0x00,0x00,0x00,0x00,
+              0x0F,0x00,0x00,0x00,0x00,
+              0x0F,0x00,0x00,0x00,0x00};
+int redNmbr;
+  int greenNmbr;
+  int blueNmbr;
+  int ledNmbr;
+  char junk=' ';
+  
+void setup() {
+  SPI.setBitOrder(MSBFIRST);
+  SPI.setDataMode(SPI_MODE0);
+  SPI.setClockDivider(SPI_CLOCK_DIV16);
+ SPI.begin();
+ Serial.begin(9600);
+}
+
+void loop() {
+  for(int a=0;a<50;a++){
+    red[a]=0;
+    green[a]=0;
+    blue[a]=0;
+  }
+  Serial.print("Give led number (1-50)\n");
+  while(Serial.available()==0){
+    ledNmbr=Serial.parseInt();  
+  ledNmbr=constrain(ledNmbr,1,50);
+   while (Serial.available() > 0)  // .parseFloat() can leave non-numeric characters
+   { junk = Serial.read() ; }      // clear the keyboard buffer
+  }
+  Serial.print("Give led color red");
+  while(Serial.available()==0){
+    redNmbr=Serial.parseInt();  
+   while (Serial.available() > 0)  // .parseFloat() can leave non-numeric characters
+   { junk = Serial.read() ; }      // clear the keyboard buffer
+  }
+  Serial.print("Give led color green");
+  while(Serial.available()==0){
+    greenNmbr=Serial.parseInt();  
+   while (Serial.available() > 0)  // .parseFloat() can leave non-numeric characters
+   { junk = Serial.read() ; }      // clear the keyboard buffer
+  }
+  Serial.print("Give led color blue");
+  while(Serial.available()==0){
+    blueNmbr=Serial.parseInt();  
+   while (Serial.available() > 0)  // .parseFloat() can leave non-numeric characters
+   { junk = Serial.read() ; }      // clear the keyboard buffer
+  }
+  
+  redNmbr = constrain(redNmbr, 0, 255);
+  greenNmbr = constrain(greenNmbr, 0, 255);
+  blueNmbr = constrain(blueNmbr, 0, 255);
+  
+  red[ledNmbr]=redNmbr;
+  green[ledNmbr]=greenNmbr;
+  blue[ledNmbr]=blueNmbr;
+  
+  
+  for(int i=0;i<50;i++){
+  SPI.transfer(red[i]);
+  SPI.transfer(green[i]);
+  SPI.transfer(blue[i]);
+  }
+}
